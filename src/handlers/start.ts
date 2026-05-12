@@ -60,10 +60,8 @@ export async function handleStart(ctx: Context) {
                 // Check if referrer reached the goal
                 if (updatedReferrer && updatedReferrer.points >= config.POINTS_REQUIRED && !updatedReferrer.is_winner) {
                     await userService.setWinner(user.invited_by);
-                    const successMessage = `🎉 Tabriklaymiz! Siz muvaffaqiyatli ${config.POINTS_REQUIRED} ta ball to'pladingiz!\n\n` +
-                        `Mana siz kutgan yopiq guruh havolasi:\n` +
-                        `${config.PRIVATE_GROUP_LINK}\n\n` +
-                        `Guruhga a'zo bo'ling va darslarni kuting!`;
+                    const successMessage = `🎉 Tabriklaymiz! Siz ekg baza kanali uchun 1 oylik obuna ga ega boldingiz, ` +
+                        `va biz sizni yopiq kanalga qo'shib qo'yamiz`;
 
                     await ctx.telegram.sendMessage(user.invited_by, successMessage);
                 }

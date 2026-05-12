@@ -9,8 +9,21 @@ export async function handleAdmin(ctx: Context) {
     }
 
     const stats = await userService.getAdminStats();
+    const winners = await userService.getAllWinners();
 
-    await ctx.reply(`📊 *Bot Statistikasi*\n\nUmumiy ro'yxatdan o'tganlar: ${stats.totalUsers}\nSeminarga yo'llanma olganlar: ${stats.totalWinners}`, {
-        parse_mode: 'Markdown'
-    });
+    let message = `📊 *Bot Statistikasi*\n\n` +
+        `Umumiy ro'yxatdan o'tganlar: ${stats.totalUsers}\n` +
+        `Seminarga yo'llanma olganlar: ${stats.totalWinners}\n\n` +
+        `🏆 *G'oliblar ro'yxati:*\n`;
+
+    if (winners && winners.length > 0) {
+        winners.forEach((winner, i) => {
+            const username = winner.username ? `@${winner.username}` : 'No username';
+            message += `${i + 1}. ${username} — ${winner.points} ta odam\n`;
+        });
+    } else {
+        message += "Hozircha g'oliblar yo'q.";
+    }
+
+    await ctx.reply(message, { parse_mode: 'Markdown' });
 }

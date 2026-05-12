@@ -24,7 +24,7 @@ export const userService = {
     async createUser(userData: Partial<User>) {
         const { data, error } = await supabase
             .from('users')
-            .insert(userData)
+            .upsert(userData, { onConflict: 'telegram_id' })
             .select()
             .single();
         if (error) throw error;
@@ -77,5 +77,15 @@ export const userService = {
             .eq('is_winner', true);
 
         return { totalUsers, totalWinners };
+    },
+
+    async getAllWinners() {
+        const { data, error } = await supabase
+            .from('users')
+            .select('username, points')
+            .eq('is_winner', true)
+            .order('points', { ascending: false });
+        if (error) throw error;
+        return data;
     }
 };

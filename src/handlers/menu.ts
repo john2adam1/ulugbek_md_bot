@@ -13,9 +13,8 @@ export async function handleMyPoints(ctx: Context) {
     let message = `Sizning joriy ballaringiz: ${user.points}\n`;
 
     if (user.points >= config.POINTS_REQUIRED) {
-        const escapedGroupLink = config.PRIVATE_GROUP_LINK.replace(/_/g, '\\_');
-        message += `\n✅ Tabriklaymiz! Siz maqsadga yetdingiz va darslarda qatnashish imkoniyatini qo'lga kiritdingiz.\n\n` +
-            `Yopiq guruh havolasi: ${escapedGroupLink}`;
+        message += `\n✅ Tabriklaymiz! Siz ekg baza kanali uchun 1 oylik obuna ga ega boldingiz, ` +
+            `va biz sizni yopiq kanalga qo'shib qo'yamiz`;
     } else {
         message += `Maqsadga yetish uchun yana ${pointsLeft} ta ball to'plashingiz kerak.`;
     }
