@@ -1,4 +1,4 @@
-import { Context } from 'telegraf';
+import { Context, Markup } from 'telegraf';
 import { userService } from '../database/users';
 import { config } from '../config';
 
@@ -6,7 +6,12 @@ async function isSubscribed(ctx: Context, userId: number): Promise<boolean> {
     try {
         const member = await ctx.telegram.getChatMember(config.CHANNEL_ID, userId);
         return ['member', 'administrator', 'creator'].includes(member.status);
-    } catch (e) {
+    } catch (e: any) {
+        if (e.description === 'Bad Request: chat not found') {
+            console.error(`ERROR: Bot cannot find the channel ${config.CHANNEL_ID}. Make sure the ID/username is correct and the bot is an ADMIN in the channel.`);
+        } else {
+            console.error('Subscription check error:', e);
+        }
         return false;
     }
 }
@@ -55,13 +60,23 @@ export async function handleStart(ctx: Context) {
                 // Check if referrer reached the goal
                 if (updatedReferrer && updatedReferrer.points >= config.POINTS_REQUIRED && !updatedReferrer.is_winner) {
                     await userService.setWinner(user.invited_by);
-                    await ctx.telegram.sendMessage(user.invited_by, `Siz muvaffaqiyatli ${config.POINTS_REQUIRED} ball to'pladingiz!\n\nSiz muvaffaqiyatli ro'yxatdan o'tdingiz!\nSeminarga kirish uchun maxsus ID-kodingiz: REF-${user.invited_by}`);
+                    const successMessage = `🎉 Tabriklaymiz! Siz muvaffaqiyatli ${config.POINTS_REQUIRED} ta ball to'pladingiz!\n\n` +
+                        `Mana siz kutgan yopiq guruh havolasi:\n` +
+                        `${config.PRIVATE_GROUP_LINK}\n\n` +
+                        `Guruhga a'zo bo'ling va darslarni kuting!`;
+
+                    await ctx.telegram.sendMessage(user.invited_by, successMessage);
                 }
             }
         }
 
         if (!subscribed) {
-            return ctx.reply(`Salom ${fullName}! Botdan foydalanish va ball yig'ish uchun avval kanalimizga a'zo bo'ling:\n${config.CHANNEL_ID}\n\nA'zo bo'lgach, qayta /start bosing.`);
+            return ctx.reply(`Salom ${fullName}! Botdan foydalanish va ball yig'ish uchun avval kanalimizga a'zo bo'ling:`,
+                Markup.inlineKeyboard([
+                    [Markup.button.url('📢 Kanalga a\'zo bo\'lish', config.CHANNEL_URL)],
+                    [Markup.button.callback('✅ Tekshirish', 'check_sub')]
+                ])
+            );
         }
 
         await ctx.reply(`Salom ${fullName}! Seminar registratsiya botiga xush kelibsiz.\n\nPastdagi tugmalar orqali referal havolangizni oling va ball to'plashni boshlang!`, {

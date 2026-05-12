@@ -1,11 +1,10 @@
 import { Context } from 'telegraf';
 import { userService } from '../database/users';
-
-const ADMIN_IDS = [12345678]; // Add actual admin Telegram IDs here
+import { config } from '../config';
 
 export async function handleAdmin(ctx: Context) {
     const telegramId = ctx.from?.id;
-    if (!telegramId || !ADMIN_IDS.includes(telegramId)) {
+    if (!telegramId || !config.ADMIN_IDS.includes(telegramId)) {
         return ctx.reply('Sizda ushbu komandani ishlatish uchun ruxsat yo\'q.');
     }
 

@@ -28,6 +28,11 @@ bot.start(async (ctx) => {
     return handleStart(ctx);
 });
 
+bot.action('check_sub', async (ctx) => {
+    await ctx.answerCbQuery().catch(() => { });
+    return handleStart(ctx);
+});
+
 // Middleware for other commands
 bot.use(checkSubscription);
 

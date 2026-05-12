@@ -13,12 +13,14 @@ export async function handleMyPoints(ctx: Context) {
     let message = `Sizning joriy ballaringiz: ${user.points}\n`;
 
     if (user.points >= config.POINTS_REQUIRED) {
-        message += `\nTabriklaymiz! Siz maqsadga yetdingiz va seminarda qatnashish imkoniyatini qo'lga kiritdingiz.\nMaxsus ID: REF-${telegramId}`;
+        const escapedGroupLink = config.PRIVATE_GROUP_LINK.replace(/_/g, '\\_');
+        message += `\n✅ Tabriklaymiz! Siz maqsadga yetdingiz va darslarda qatnashish imkoniyatini qo'lga kiritdingiz.\n\n` +
+            `Yopiq guruh havolasi: ${escapedGroupLink}`;
     } else {
         message += `Maqsadga yetish uchun yana ${pointsLeft} ta ball to'plashingiz kerak.`;
     }
 
-    await ctx.reply(message);
+    await ctx.reply(message, { parse_mode: 'Markdown' });
 }
 
 export async function handleGetLink(ctx: Context) {
@@ -28,14 +30,15 @@ export async function handleGetLink(ctx: Context) {
     const botInfo = await ctx.telegram.getMe();
     const referralLink = `https://t.me/${botInfo.username}?start=${telegramId}`;
 
-    const text = `🚀 Salom! Men "Zamonaviy IT" seminariga ro'yxatdan o'tdim.\n\nSiz ham ushbu seminarda qatnashmoqchi bo'lsangiz, quyidagi havola orqali ro'yxatdan o'ting va bepul chiptani qo'lga kiriting!\n\nRo'yxatdan o'tish: ${referralLink}`;
+    const escapedLink = referralLink.replace(/_/g, '\\_');
+    const text = `🩺 *Bepul EKG darslari*\n\nMalakali kardiolog tomonidan olib boriladi.\n\n1 hafta davomida EKG asoslaridan boshlab murakkab aritmiyalargacha o'rgatiladi.\n\nBepul darslarda qatnashish uchun kamida 5 ta do'stingizni taklif qilishingiz kerak bo'ladi.\n\nRo'yxatdan o'tish: ${escapedLink}`;
 
     await ctx.reply(`Sizning shaxsiy referal havolangiz:\n\n${referralLink}\n\nUshbu matnni nusxalab do'stlaringizga yuboring:`);
-    await ctx.reply(text);
+    await ctx.reply(text, { parse_mode: 'Markdown' });
 }
 
 export async function handleAboutSeminar(ctx: Context) {
-    await ctx.reply(`ℹ️ *Seminar haqida*\n\nMavzu: Web Development va AI integratsiyasi\nSana: 25-May, 2024\nJoy: IT Park Tashkent\n\nUshbu seminarda siz sohadagi so'nggi yangiliklar bilan tanishasiz va tajribali mutaxassislardan maslahatlar olasiz.`, {
+    await ctx.reply(`ℹ️ *Darslar haqida*\n\nMavzu: EKG asoslari va aritmiyalar\nDavomiyligi: 1 hafta\nFormat: Telegram kanal orqali bepul darslar\n\nUshbu darslar malakali kardiolog tomonidan olib boriladi va EKGni o'qish hamda tahlil qilishni o'rgatadi.`, {
         parse_mode: 'Markdown'
     });
 }
