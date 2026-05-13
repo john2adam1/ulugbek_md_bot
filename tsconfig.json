@@ -3,7 +3,7 @@
         "target": "ESNext",
         "module": "CommonJS",
         "outDir": "./dist",
-        "rootDir": ".",
+        "rootDir": "./src",
         "strict": true,
         "esModuleInterop": true,
         "skipLibCheck": true,
@@ -11,11 +11,11 @@
         "moduleResolution": "node"
     },
     "include": [
-        "src/**/*",
-        "api/**/*"
+        "src/**/*"
     ],
     "exclude": [
         "node_modules",
+        "api",
         "**/*.spec.ts"
     ]
 }
